@@ -9,7 +9,7 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(express.static("public"));
 
-app.get('/google0231d57f2d4dd65a.html', (req, res) => {
+app.get('/google0231d57f2d4dd65a (1).html', (req, res) => {
   res.sendFile(path.join(__dirname, 'google0231d57f2d4dd65a.html'));
 });
 let rooms = {};
