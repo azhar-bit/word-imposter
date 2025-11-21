@@ -1,3 +1,9 @@
+const path = require('path');
+
+app.get('/google0231d57f2d4dd65a.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'google0231d57f2d4dd65a.html'));
+});
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
