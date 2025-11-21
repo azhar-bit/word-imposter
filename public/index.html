@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Imposter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="menu">
+  <h1>Word Imposter</h1>
+  <input id="playerName" placeholder="Enter your name">
+  <input id="roomCode" placeholder="Room code">
+  <button id="createRoom">Create Room</button>
+  <button id="joinRoom">Join Room</button>
+</div>
+
+<div id="lobby" class="hidden">
+  <h2>Lobby</h2>
+  <div id="players"></div>
+  <button id="startGame">Start Game</button>
+</div>
+
+<div id="gameArea" class="hidden">
+  <h2>Your Word</h2>
+  <h3 id="yourWord"></h3>
+
+  <h3>Hints</h3>
+  <div id="hints"></div>
+
+  <input id="hintInput" placeholder="Enter hint">
+  <button id="sendHint">Send Hint</button>
+
+  <div id="voteSection" class="hidden">
+    <h3>Vote the imposter:</h3>
+    <div id="voteButtons"></div>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+input, button {
+  margin: 5px;
+  padding: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+#gameArea, #lobby {
+  margin-top: 20px;
+}
+
+#voteButtons button {
+  margin: 5px;
+  padding: 10px 20px;
+}

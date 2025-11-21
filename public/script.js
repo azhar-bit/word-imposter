@@ -2,27 +2,35 @@ const socket = io();
 let currentRoom = null;
 let playerName = null;
 
+// ========== CREATE ROOM ==========
 document.getElementById('createRoom').onclick = () => {
   currentRoom = document.getElementById('roomCode').value;
   playerName = document.getElementById('playerName').value;
+
   if (!playerName || !currentRoom) return alert('Enter name and room code');
+
   socket.emit('createRoom', { roomCode: currentRoom, name: playerName });
   showLobby();
 };
 
+// ========== JOIN ROOM ==========
 document.getElementById('joinRoom').onclick = () => {
   currentRoom = document.getElementById('roomCode').value;
   playerName = document.getElementById('playerName').value;
+
   if (!playerName || !currentRoom) return alert('Enter name and room code');
+
   socket.emit('joinRoom', { roomCode: currentRoom, name: playerName });
   showLobby();
 };
 
+// ========== START GAME ==========
 document.getElementById('startGame').onclick = () => {
   const wordList = ['Pizza', 'Laptop', 'Elephant', 'Chocolate', 'Volcano', 'Guitar'];
   socket.emit('startGame', { roomCode: currentRoom, wordList });
 };
 
+// ========== SEND HINT ==========
 document.getElementById('sendHint').onclick = () => {
   const hint = document.getElementById('hintInput').value;
   if (!hint) return;
@@ -30,21 +38,32 @@ document.getElementById('sendHint').onclick = () => {
   document.getElementById('hintInput').value = '';
 };
 
-// Show lobby
+// ========== LOBBY UI ==========
 function showLobby() {
-  document.getElementById('menu').style.display = 'none';
-  document.getElementById('lobby').style.display = 'block';
+  document.getElementById('menu').classList.add("hidden");
+  document.getElementById('lobby').classList.remove("hidden");
 }
 
-// Socket listeners
+// ========== SOCKET LISTENERS ==========
 socket.on('playerList', (players) => {
   document.getElementById('players').innerHTML =
-    '<h3>Players:</h3>' + players.map(p => `<div>${p.name}</div>`).join('');
+    '<h3>Players:</h3>' +
+    players.map(p => `<div>${p.name}</div>`).join('');
+});
+
+socket.on('gameStarted', () => {
+  document.getElementById('voteSection').classList.add("hidden");
+  document.getElementById('hints').innerHTML = '';
+
+  setTimeout(() => {
+    socket.emit('getVoteList', currentRoom);
+    document.getElementById('voteSection').classList.remove("hidden");
+  }, 8000);
 });
 
 socket.on('yourWord', (word) => {
-  document.getElementById('lobby').style.display = 'none';
-  document.getElementById('gameArea').style.display = 'block';
+  document.getElementById('lobby').classList.add("hidden");
+  document.getElementById('gameArea').classList.remove("hidden");
   document.getElementById('yourWord').innerText = word;
 });
 
@@ -54,41 +73,29 @@ socket.on('newHint', ({ name, hint }) => {
   document.getElementById('hints').appendChild(div);
 });
 
-socket.on('gameStarted', () => {
-  document.getElementById('voteSection').style.display = 'none';
-  document.getElementById('hints').innerHTML = '';
-});
+socket.on('votePlayerList', (players) => {
+  const container = document.getElementById('voteButtons');
+  container.innerHTML = '';
 
-socket.on('voteReceived', ({ voter, votedFor }) => {
-  console.log(`${voter} voted for ${votedFor}`);
-});
-
-socket.on('revealResults', ({ mostVoted, imposter }) => {
-  document.getElementById('results').innerHTML =
-    `<h2>Most Voted: ${mostVoted}</h2>
-     <h2>Imposter was: ${imposter}</h2>
-     <h3>${mostVoted === imposter ? 'Crewmates Win 🎉' : 'Imposter Wins 😈'}</h3>`;
-});
-
-socket.on('gameStarted', () => {
-  // After some time (like after all hints), show voting buttons
-  setTimeout(() => {
-    document.getElementById('voteSection').style.display = 'block';
-    socket.emit('getPlayerList', currentRoom);
-  }, 8000); // 8 seconds after hints start
-});
-
-socket.on('playerList', (players) => {
-  document.getElementById('voteButtons').innerHTML = '';
   players.forEach(p => {
     if (p.name !== playerName) {
       const btn = document.createElement('button');
       btn.textContent = p.name;
+
       btn.onclick = () => {
         socket.emit('submitVote', { roomCode: currentRoom, votedName: p.name });
-        document.getElementById('voteSection').style.display = 'none';
+        document.getElementById('voteSection').classList.add("hidden");
       };
-      document.getElementById('voteButtons').appendChild(btn);
+
+      container.appendChild(btn);
     }
   });
+});
+
+socket.on('revealResults', ({ mostVoted, imposter }) => {
+  document.getElementById('results').innerHTML = `
+    <h2>Most Voted: ${mostVoted}</h2>
+    <h2>Imposter was: ${imposter}</h2>
+    <h3>${mostVoted === imposter ? 'Crewmates Win 🎉' : 'Imposter Wins 😈'}</h3>
+  `;
 });
