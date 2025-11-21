@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: word-imposter
+    env: node
+    startCommand: node server.js
+    buildCommand: npm install
+    plan: free
