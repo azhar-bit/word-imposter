@@ -1,12 +1,7 @@
-const path = require('path');
-
-app.get('/google0231d57f2d4dd65a.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'google0231d57f2d4dd65a.html'));
-});
-
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +9,9 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(express.static("public"));
 
+app.get('/google0231d57f2d4dd65a.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'google0231d57f2d4dd65a.html'));
+});
 let rooms = {};
 
 // ========== SOCKET CONNECTION ==========
